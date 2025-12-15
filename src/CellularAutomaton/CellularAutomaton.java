@@ -1,40 +1,13 @@
+package CellularAutomaton;
+
 import org.jfugue.player.Player;
+import GraphicalUtilities.GridMapVisualizer;
 
 import javax.swing.*;
 import java.util.Random;
 import java.util.Scanner;
 
 public class CellularAutomaton {
-    public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-        int swaws;
-        CellularAutomaton ca = new CellularAutomaton(0,0,0);
-
-        System.out.println("Ciao! Questo è uno script che avvia una simulazione del gioco della vita!");
-        /*System.out.println("Inserisci la dimensione della tabella");
-        swaws = input.nextInt();
-        ca.setDimension( swaws );
-
-        System.out.println("Inserisci il numero di colori della tabella");
-        swaws = input.nextInt();
-        ca.setColors( swaws );
-
-        System.out.println("Inserisci il threshold per passare al prossimo stato");
-        swaws = input.nextInt();
-        ca.setThreshold( swaws );*/
-
-        ca.setColors(4);   //Max 24
-        ca.setDimension(50);
-        ca.setThreshold(2); //Max 8
-        ca.millisecondi = 50;
-
-        System.out.println("Lancio con valori");
-        System.out.println("Dimensioni = " + ca.DIMENSION);
-        System.out.println("Colori = " + ca.COLORS);
-        System.out.println("Threshold = " + ca.PROGRESSIONTHRESHOLD);
-
-        ca.Start();
-    }
     int COLORS;
     int PROGRESSIONTHRESHOLD;
     int DIMENSION;
@@ -45,7 +18,7 @@ public class CellularAutomaton {
     int maxIterations = 10000;
     int[][] statoAttuale;
     int [][] mappaVariazioni = new int[DIMENSION][DIMENSION];
-    String[] notes = {"B3", "C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "D5", "D5", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4", "B3"};
+    String[] notes = {"C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "D5", "D5", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4"};
     String[] durations = {"w", "h", "q", "i", "s", "t"};
     String melodia = "";
     String medie = "";
@@ -58,7 +31,7 @@ public class CellularAutomaton {
 
     public void Start() {
         Random rand = new Random();
-        statoAttuale = GenerateRandomState(true);
+        statoAttuale = GenerateRandomState(false);
         mappaVariazioni = SetStateToNull();
 
         //Frame per disegnare l'automa
@@ -72,20 +45,21 @@ public class CellularAutomaton {
         varFrame.setSize(600, 600);
 
         // Visualizzatore automa
-        GridMapVisualizer visualizer = new GridMapVisualizer(statoAttuale);
+        GridMapVisualizer visualizer = new GridMapVisualizer(statoAttuale, false);
         frame.add(visualizer);
         frame.setVisible(true);
 
         // Visualizzatore variazioni
-        GridMapVisualizer varVisualizer = new GridMapVisualizer(mappaVariazioni);
+        GridMapVisualizer varVisualizer = new GridMapVisualizer(mappaVariazioni, true);
         varFrame.add(varVisualizer);
         varFrame.setVisible(true);
 
         //Questo è un fattore nella melodia trovata
         int controllo = 50;
         int mediaZona;
-        int selPixelX = rand.nextInt(1, DIMENSION);
-        int selPixelY = rand.nextInt(1, DIMENSION);
+        int dimKernel = 3;
+        int selPixelX = rand.nextInt(1, DIMENSION - dimKernel);
+        int selPixelY = rand.nextInt(1, DIMENSION  - dimKernel);
 
         while(iteration < maxIterations)
         {
@@ -108,8 +82,7 @@ public class CellularAutomaton {
             {
                 controllo *= 1;
 
-                mediaZona = KernelMedia(selPixelX, selPixelY);
-                //mediaZona = KernelMedia(DIMENSION/2, DIMENSION/2);
+                mediaZona = KernelMedia(selPixelX, selPixelY, dimKernel);
 
                 medie += " " + mediaZona;
                 melodia += " " + notes[mediaZona] + "i";
@@ -163,7 +136,7 @@ public class CellularAutomaton {
                 if(progTreshTemp >= PROGRESSIONTHRESHOLD)
                 {
                     statoFuturo[j][k] = progValTemp;
-                    if(mappaVariazioni[j][k] < 2) mappaVariazioni[j][k]++;
+                    if(mappaVariazioni[j][k] < 2) mappaVariazioni[j][k]+=2;
                 }
                 else {
                     statoFuturo[j][k] = statoAttuale[j][k];
@@ -176,8 +149,10 @@ public class CellularAutomaton {
         statoAttuale = statoFuturo;
     }
 
-    public int KernelMedia(int x, int y)
+    public int KernelMedia(int startx, int starty, int dimensions)
     {
+        int tot = 0;
+        int validElements = 0;
         //Questo è un kernel 3x3 che studia la media
         //Proposte:
         //1. Cambiare le dimensioni
@@ -191,27 +166,47 @@ public class CellularAutomaton {
         // Con threshold = 2
         //TODO: studiare il comportamento delle aree a bassa entropia (quelle che cambiano molto) e interpretare il risultato
 
-        return (statoAttuale[x-1][y+1]+
-                statoAttuale[x+1][y+1]+
-                statoAttuale[x+1][y-1]+
-                statoAttuale[x-1][y-1]+
-                statoAttuale[x+1][y]+
-                statoAttuale[x-1][y]+
-                statoAttuale[x][y+1]+
-                statoAttuale[x][y-1]+
-                statoAttuale[x][y])/9;
+        for(int i = startx; i < startx + dimensions; i++)
+        {
+                for(int  j = starty; j < starty + dimensions; j++)
+                {
+                    if(i < DIMENSION && j < DIMENSION)
+                    {
+                        tot += statoAttuale[i][j];
+                        validElements++;
+                    }
+                }
+        }
+
+        return tot/validElements;
     }
 
-    protected void setThreshold(int t) {
+    public int GlobalMedia()
+    {
+        int i = 0;
+        for(int j = 0; j < statoAttuale.length; j++){
+            for(int k = 0; k < statoAttuale[j].length; k++){
+                i += statoAttuale[j][k];
+            }
+        }
+        return i / statoAttuale.length;
+    }
+
+    public void setThreshold(int t) {
         PROGRESSIONTHRESHOLD = t;
     }
 
-    protected void setColors(int c) {
+    public void setColors(int c) {
         COLORS = c;
     }
 
-    protected void setDimension(int d){
+    public void setDimension(int d){
         DIMENSION = d;
+    }
+
+    public void setCooldownBetweenStates(int a)
+    {
+        millisecondi = a;
     }
 
     public int [][] GenerateRandomState(boolean option){
