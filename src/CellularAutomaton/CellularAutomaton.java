@@ -15,7 +15,7 @@ public class CellularAutomaton {
     int millisecondi = 500;
     //L'iterazione corrente
     int iteration = 0;
-    int maxIterations = 10000;
+    int maxIterations = 100000;
     int[][] statoAttuale;
     int [][] mappaVariazioni = new int[DIMENSION][DIMENSION];
     String[] notes = {"C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "D5", "D5", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4"};
@@ -55,7 +55,7 @@ public class CellularAutomaton {
         varFrame.setVisible(true);
 
         //Questo è un fattore nella melodia trovata
-        int controllo = 50;
+        int controllo = 46;
         int mediaZona;
         int dimKernel = 3;
         int selPixelX = rand.nextInt(1, DIMENSION - dimKernel);
