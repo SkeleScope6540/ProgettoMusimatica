@@ -7,12 +7,13 @@ public class Main
 {
     public static void main(String[] args)
     {
-        //GenerateMelody();
+        //GenerateMelodyFromCA();
         //GenerateCA();
-        GenerateMusicalGA();
+        //GenerateMusicalGA(10);
+        GenerateMusicalGAFromCA(10);
     }
 
-    public static void GenerateMelody()
+    public static void GenerateMelodyFromCA()
     {
         CellularAutomaton ca = new CellularAutomaton(0,0,0);
 
@@ -20,9 +21,9 @@ public class Main
         ca.setDimension(150);
         ca.setThreshold(1); //Max 8
         ca.setCooldownBetweenStates(0);
-        ca.setStepsBetweenControl(20);
+        ca.setStepsBetweenControl(11);
         ca.setMaxIterations(1000);
-        ca.Start();
+        ca.Start(true);
     }
 
     public static void GenerateCA()
@@ -34,16 +35,16 @@ public class Main
         ca.setThreshold(2); //Max 8
         ca.setCooldownBetweenStates(50);
         ca.setStepsBetweenControl(50);
-        ca.Start();
+        ca.Start(true);
     }
 
-    public static void GenerateMusicalGA()
+    public static void GenerateMusicalGA(int populationSize)
     {
         MusicalGA mga = new MusicalGA();
         String[] strings;
         mga.setStartingStrings(null);
-        mga.generateStartingPopulation(1001, 10);
-        String melodiaVecchia = "V0 I[Guitar] "+mga.getStartingStrings()[0]+mga.getStartingStrings()[0];
+        mga.generateStartingPopulation(1001, populationSize);
+        String melodiaVecchia = "V0 "+mga.getStartingStrings()[0]+mga.getStartingStrings()[0];
         strings = mga.startGA();
 
         Player player = new Player();
@@ -51,10 +52,53 @@ public class Main
         player.play(melodiaVecchia);
 
         Player player2 = new Player();
-        String melodia = "V1 I[Guitar] " +strings[0] + strings[0];
+        String melodia = "V1 " +strings[0] + strings[0];
         System.out.println("Melodia del miglior cromosoma: "+melodia);
         String armonia = "V2 I[Flute] " + Instrumentinator.armonizator(strings[0]) + Instrumentinator.armonizator(strings[0]);
-        System.out.println("Armonia del armonizator: "+armonia);
+        System.out.println("Armonia dell'armonizator: "+armonia);
+        Pattern pattern = new Pattern(melodia+" "+armonia);
+        player2.play(pattern);
+    }
+
+    //Metodo che crea una stringa di 16 note a partire dall'output del cellular automaton
+    public static void GenerateMusicalGAFromCA(int populationSize)
+    {
+        CellularAutomaton ca = new CellularAutomaton(140,14,1);
+        ca.setMaxIterations(5000);
+        ca.setStepsBetweenControl(12);
+        ca.setCooldownBetweenStates(0);
+        String [] cAOutputNotes;
+        cAOutputNotes = ca.Start(false);
+        String [] cAOutputStrings = new String[populationSize];
+
+        for(int j=0;j<populationSize;j++)
+        {
+            //Ripuliamo la stringa dal null, così non genera errore
+            cAOutputStrings[j] = "";
+            //16 è la dimensione dei singoli individui, 4 battute da 4 note ognuna
+            for(int i=j;i<j+16;i++)
+            {
+                cAOutputStrings[j] += cAOutputNotes[i] + " ";
+            }
+            System.out.println("Melodia di partenza "+ j +": "+cAOutputStrings[j]);
+        }
+
+        MusicalGA mga = new MusicalGA();
+        String[] mGAOutputStrings;
+        mga.setStartingStrings(cAOutputStrings);
+        mga.generateStartingPopulation(1001, populationSize);
+        String melodiaVecchia = "V0 "+mga.getStartingStrings()[0]+mga.getStartingStrings()[0];
+        mGAOutputStrings = mga.startGA();
+
+        Player player = new Player();
+        System.out.println("Melodia di partenza: "+melodiaVecchia);
+        player.play(melodiaVecchia);
+
+        Player player2 = new Player();
+        String melodia = "V1 " +mGAOutputStrings[0] + mGAOutputStrings[0];
+        System.out.println("Melodia del miglior cromosoma: "+melodia);
+        String armonia = "V2 I[Flute] " + Instrumentinator.armonizator(mGAOutputStrings[0]) + Instrumentinator.armonizator(mGAOutputStrings[0]);
+        System.out.println("Armonia dell'armonizator: "+armonia);
         Pattern pattern = new Pattern(melodia+" "+armonia);
         player2.play(pattern);
     }

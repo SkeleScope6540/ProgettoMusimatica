@@ -25,13 +25,13 @@ public class CellularAutomaton {
     String melodia = "";
     String medie = "";
 
-    public CellularAutomaton(int d, int c, int t) {
-        setDimension(d);
-        setThreshold(t);
-        setColors(c);
+    public CellularAutomaton(int dimensions, int colorNumber, int threshold) {
+        setDimension(dimensions);
+        setThreshold(threshold);
+        setColors(colorNumber);
     }
 
-    public void Start() {
+    public String[] Start(boolean alsoPlay) {
         Random rand = new Random();
         statoAttuale = GenerateRandomState(false);
         mappaVariazioni = SetStateToNull();
@@ -82,22 +82,24 @@ public class CellularAutomaton {
             {
                 mediaZona = KernelMedia(selPixelX, selPixelY, dimKernel);
 
-                medie += " " + mediaZona;
-                melodia += " " + notes[mediaZona] + "i";
+                medie += mediaZona + " ";
+                melodia += notes[mediaZona] + " ";
             }
         }
 
         System.out.println("Medie: " + medie);
         System.out.println("Melodia: " + melodia);
-        Player player = new Player();
-        player.play(melodia);
+        if(alsoPlay)
+        {
+            Player player = new Player();
+            player.play(melodia);
+        }
+        return melodia.split(" ");
     }
 
     public void NextState(){
         int progValTemp = 0;
-        int regValTemp = 0;
         int progTreshTemp = 0;
-        int regTreshTemp = 0;
         int [][] statoFuturo = new int[DIMENSION][DIMENSION];
         for(int j = 0; j < statoAttuale.length; j++){
             for(int k = 0; k < statoAttuale[j].length; k++){
@@ -141,7 +143,6 @@ public class CellularAutomaton {
                     if(mappaVariazioni[j][k] != 0)   mappaVariazioni[j][k]--;
                 }
                 progTreshTemp = 0;
-                regTreshTemp = 0;
             }
         }
         statoAttuale = statoFuturo;

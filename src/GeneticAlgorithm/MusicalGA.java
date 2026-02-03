@@ -42,6 +42,9 @@ public class MusicalGA {
         else maxGenerations = generations;
 
         this.populationSize = populationSize;
+        for (int i = 0; i < populationSize; i++) {
+            System.out.println(i + " - " + startingStrings[i]);
+        }
     }
 
     public String[] startGA() {
