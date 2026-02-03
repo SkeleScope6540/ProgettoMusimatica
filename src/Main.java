@@ -10,8 +10,8 @@ public class Main
     {
         //GenerateMelodyFromCA();
         //GenerateCA();
-        //GenerateMusicalGA(10);
-        GenerateMusicalGAFromCA(10);
+        GenerateMusicalGA(10);
+        //GenerateMusicalGAFromCA(15);
     }
 
     public static void GenerateMelodyFromCA()
@@ -57,7 +57,9 @@ public class Main
         System.out.println("Melodia del miglior cromosoma: "+melodia);
         String armonia = "V2 I[Flute] " + Instrumentinator.armonizator(strings[0]) + Instrumentinator.armonizator(strings[0]);
         System.out.println("Armonia dell'armonizator: "+armonia);
-        Pattern pattern = new Pattern(melodia+" "+armonia);
+        String motivetto = "V3 I[Guitar] " + Instrumentinator.arpeggiator(strings[0]) + Instrumentinator.arpeggiator(strings[0]);
+        System.out.println("Motivetto dell'arpeggiator: "+motivetto);
+        Pattern pattern = new Pattern(melodia+" "+armonia+" "+motivetto);
         player2.play(pattern);
     }
 
@@ -87,7 +89,7 @@ public class Main
         MusicalGA mga = new MusicalGA();
         String[] mGAOutputStrings;
         mga.setStartingStrings(cAOutputStrings);
-        mga.generateStartingPopulation(1001, populationSize);
+        mga.generateStartingPopulation(101, populationSize);
         String melodiaVecchia = "V0 "+mga.getStartingStrings()[0]+mga.getStartingStrings()[0];
         mGAOutputStrings = mga.startGA();
 
@@ -96,13 +98,18 @@ public class Main
         player.play(melodiaVecchia);
 
         Player player2 = new Player();
-        String melodia = "V1 " +mGAOutputStrings[0] + mGAOutputStrings[0];
+
+        String melodia = "V1 I[Flute] " +mGAOutputStrings[0] + mGAOutputStrings[0];
         System.out.println("Melodia del miglior cromosoma: "+melodia);
-        String armonia = "V2 I[Flute] " + Instrumentinator.armonizator(mGAOutputStrings[0]) + Instrumentinator.armonizator(mGAOutputStrings[0]);
+
+        String armonia = "V2 " + Instrumentinator.armonizator(mGAOutputStrings[0]) + Instrumentinator.armonizator(mGAOutputStrings[0]);
         System.out.println("Armonia dell'armonizator: "+armonia);
+
         String motivetto = "V3 I[Guitar] " + Instrumentinator.arpeggiator(mGAOutputStrings[0]) + Instrumentinator.arpeggiator(mGAOutputStrings[0]);
         System.out.println("Motivetto dell'arpeggiator: "+motivetto);
+
         Pattern pattern = new Pattern(melodia+" "+armonia+" "+motivetto);
+
         player2.play(pattern);
     }
 }

@@ -1,5 +1,7 @@
 package MusicalUtilities;
 
+import java.util.Random;
+
 public class Instrumentinator {
     public static String armonizator(String brano)
     {
@@ -24,6 +26,7 @@ public class Instrumentinator {
         String [] scala = MusicLibrary.notesWithHalves;
         String arpeggio = "";
         String [] note = brano.split(" ");
+        Random rand = new Random();
 
         for(int j = 0; j<note.length; j++)
         {
@@ -35,18 +38,29 @@ public class Instrumentinator {
                 }
             }
 
-            if (index == -1) {
+            if (index == -1)
+            {
                 System.err.println("Arpeggiator - Nota non trovata!");
                 return " "+note[j];
             }
-            else if (index + 7 > scala.length) {
-                System.err.println("Arpeggiator - Arpeggio fuori dal range!");
-                return " "+note[j];
-            }
-            else {
-                //Costruisce un arpeggio maggiore a partire da quella nota
+            else if (rand.nextDouble() < 0.3)
+            {
+                //Costruisce un arpeggio maggiore crescente a partire da quella nota
                 //L'asterisco specifica le triple
-                arpeggio += ""+scala[index]+"i* "+scala[index+4]+"i* " +scala[index+7]+"i* "/*+scala[index+4]+"i "*/;
+                arpeggio += ""+scala[index]+"i* "+scala[index+4]+"i* " +scala[index+7]+"i* ";
+            }
+            else
+            {
+                if (rand.nextDouble() < 0.5)
+                {
+                    //Costruisce un arpeggio maggiore decrescente a partire da quella nota
+                    arpeggio += ""+scala[index]+"i* "+scala[index-4]+"i* " +scala[index-7]+"i* ";
+                }
+                else
+                {
+                    //Non aggiunge nulla, ripete la nota e basta
+                    arpeggio += scala[index]+"q ";
+                }
             }
         }
 

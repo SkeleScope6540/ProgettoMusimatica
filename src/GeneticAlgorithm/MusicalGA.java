@@ -127,11 +127,15 @@ public class MusicalGA {
         {
             temp = population[i].split(" ");
             valutazioni[i] =
+                    //Questi primi sono presi dal manuale del professore
                     noteConsonanti(temp) +
                     saltiVietati(temp) +
                     successioniTipiche(temp) +
                     tonicaODominante(temp) +
-                    tonicaFinale(temp);
+                    tonicaFinale(temp) +
+                    //Questi sono stati aggiunti da me
+                    troppeRipetizioni(temp) +
+                    troppiSaltiDiOttava(temp);
         }
 
         System.out.println("--Risultati popolazione generazione "+currentGeneration+"--");
@@ -267,6 +271,53 @@ public class MusicalGA {
         if(individuo[12].toLowerCase().toCharArray()[0] == MusicLibrary.tonic)
         {
             valutazione = 5;
+        }
+        return valutazione;
+    }
+
+    private int troppeRipetizioni(String[] individuo)
+    {
+        //Dato che l'algoritmo adora fare tanti punti ripetendo la tonica nel brano, scoraggiamo questo comportamento
+        int valutazione = 0;
+        char [] gradiAccordi = new char[4];
+        gradiAccordi[0] = individuo[0].toLowerCase().toCharArray()[0];
+        gradiAccordi[1] = individuo[4].toLowerCase().toCharArray()[0];
+        gradiAccordi[2] = individuo[8].toLowerCase().toCharArray()[0];
+        gradiAccordi[3] = individuo[12].toLowerCase().toCharArray()[0];
+        for(int i = 0; i < gradiAccordi.length - 1; i++)
+        {
+            if(gradiAccordi[i] == gradiAccordi[i+1])
+            {
+                valutazione -=3;
+            }
+        }
+        return valutazione;
+    }
+
+    private int troppiSaltiDiOttava(String[] individuo)
+    {
+        //Puniamo gli eccessivi salti da un'ottava all'altra
+        int valutazione = 0;
+        for(int i = 1; i < individuo.length - 1; i++)
+        {
+            //Questo controllo funziona controllando il valore di altezza delle note che è sempre il secondo nel nostro caso
+            //Va rivisto, tuttavia, in caso si usano le note # perché in quel caso il valore che cerchiamo è il 3o elemento
+            if(individuo[i].charAt(1) != individuo[i+1].charAt(1) && individuo[i].charAt(1) != individuo[i-1].charAt(1))
+            {
+                valutazione -=3;
+            }
+        }
+
+        //Controlliamo se il primo, il secondo e il terzo accordo saltano ognuno di un'ottava
+        if(individuo[0].charAt(1) != individuo[4].charAt(1) &&  individuo[8].charAt(1) != individuo[4].charAt(1))
+        {
+            valutazione -= 3;
+        }
+
+        //Controlliamo se il secondo, il terzo e il quarto accordo saltano ognuno di un'ottava
+        if(individuo[4].charAt(1) != individuo[8].charAt(1) &&  individuo[8].charAt(1) != individuo[12].charAt(1))
+        {
+            valutazione -= 3;
         }
         return valutazione;
     }
