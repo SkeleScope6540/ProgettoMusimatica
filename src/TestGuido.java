@@ -11,8 +11,8 @@ public class TestGuido
 {
     public static void main(String[] args) {
         TestGuido t = new TestGuido();
-        t.Guido();
-        //t.Arpeggiator();
+        //t.Guido();
+        t.Arpeggiator();
     }        
 
     public void Guido()

@@ -1,5 +1,6 @@
 import CellularAutomaton.CellularAutomaton;
 import GeneticAlgorithm.MusicalGA;
+import MusicalUtilities.Instrumentinator;
 import org.jfugue.pattern.Pattern;
 import org.jfugue.player.Player;
 
@@ -60,7 +61,7 @@ public class Main
         player2.play(pattern);
     }
 
-    //Metodo che crea una stringa di 16 note a partire dall'output del cellular automaton
+    //Metodo che crea una stringa di 16 note a partire dall'output del cellular automaton e la da come input all'algoritmo genetico
     public static void GenerateMusicalGAFromCA(int populationSize)
     {
         CellularAutomaton ca = new CellularAutomaton(140,14,1);
@@ -99,7 +100,9 @@ public class Main
         System.out.println("Melodia del miglior cromosoma: "+melodia);
         String armonia = "V2 I[Flute] " + Instrumentinator.armonizator(mGAOutputStrings[0]) + Instrumentinator.armonizator(mGAOutputStrings[0]);
         System.out.println("Armonia dell'armonizator: "+armonia);
-        Pattern pattern = new Pattern(melodia+" "+armonia);
+        String motivetto = "V3 I[Guitar] " + Instrumentinator.arpeggiator(mGAOutputStrings[0]) + Instrumentinator.arpeggiator(mGAOutputStrings[0]);
+        System.out.println("Motivetto dell'arpeggiator: "+motivetto);
+        Pattern pattern = new Pattern(melodia+" "+armonia+" "+motivetto);
         player2.play(pattern);
     }
 }
