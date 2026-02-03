@@ -1,3 +1,5 @@
+package OtherAlgorithms;
+
 import org.jfugue.player.Player;
 
 import java.util.HashMap;

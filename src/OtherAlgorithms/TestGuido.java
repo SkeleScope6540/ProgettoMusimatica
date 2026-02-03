@@ -1,10 +1,11 @@
+package OtherAlgorithms;
+
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Arrays;
 import java.util.Collections;
 import org.jfugue.player.Player;
-import org.jfugue.rhythm.Rhythm;
 import org.jfugue.pattern.Pattern;
 
 public class TestGuido
