@@ -2,20 +2,17 @@ package GraphicalUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
 
 public class GridMapVisualizer extends JPanel {
 
-    // La tua matrice di dati
+    // La matrice da visualizzare
     private int[][] grid;
-    // Mappatura dei colori per i valori da 0 a 9
     private final Color[] colorMap;
 
     public GridMapVisualizer(int[][] grid, boolean selectForVariations) {
         this.grid = grid;
 
         if(!selectForVariations) {
-            // Definiamo 10 colori distinti per i valori 0-9
             this.colorMap = new Color[]{
                     Color.ORANGE,     // 0
                     Color.RED,        // 1
@@ -43,6 +40,7 @@ public class GridMapVisualizer extends JPanel {
                     Color.BLACK,      // 23
             };
         }
+        //Questo è usato per mostrare la griglia delle variazioni del CA
         else  {
             this.colorMap = new Color[]{
                     Color.gray,     // 0
@@ -58,7 +56,6 @@ public class GridMapVisualizer extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Controlli di sicurezza
         if (grid == null || grid.length == 0) return;
 
         int rows = grid.length;
@@ -72,7 +69,6 @@ public class GridMapVisualizer extends JPanel {
             for (int c = 0; c < cols; c++) {
                 int value = grid[r][c];
 
-                // Assicuriamoci che il valore sia tra 0 e 9 per evitare crash
                 if (value >= 0 && value < colorMap.length) {
                     g.setColor(colorMap[value]);
                 } else {
@@ -82,7 +78,7 @@ public class GridMapVisualizer extends JPanel {
                 // Disegna il rettangolo pieno
                 g.fillRect(c * cellWidth, r * cellHeight, cellWidth, cellHeight);
 
-                // Opzionale: disegna il bordo nero per separare i quadratini
+                // Disegna il bordo nero per separare i quadratini
                 g.setColor(Color.BLACK);
                 g.drawRect(c * cellWidth, r * cellHeight, cellWidth, cellHeight);
             }

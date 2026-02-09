@@ -10,8 +10,8 @@ public class Main
     {
         //GenerateMelodyFromCA();
         //GenerateCA();
-        GenerateMusicalGA(10);
-        //GenerateMusicalGAFromCA(15);
+        //GenerateMusicalGA(10);
+        GenerateMusicalGAFromCA(15);
     }
 
     public static void GenerateMelodyFromCA()
